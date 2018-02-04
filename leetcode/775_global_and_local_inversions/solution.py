@@ -15,7 +15,7 @@ class Solution:
             cnt = 0;
             l = []
             for i in A:
-                x = bisect.bisect_left(l, i)
+                x = bisect.bisect_right(l, i)
                 cnt += len(l) - x
                 bisect.insort(l, i)
             return cnt
