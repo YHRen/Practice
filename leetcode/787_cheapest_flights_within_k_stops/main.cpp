@@ -5,6 +5,7 @@
 #include <queue>
 #include <stack>
 #include <unordered_map>
+#include <unordered_set>
 #include <limits>
 #include <iostream> 
 #include <iomanip>  
@@ -36,6 +37,7 @@ typedef vector<int> vi;
 typedef pair<int,int> ii;
 typedef vector<vi>  vvi;
 typedef vector<ii>  vii;
+typedef vector<vii> vvii;
 
 #ifdef DEBUG
 #define debug(args...)            {dbg,args; clog<<endl;}
@@ -62,29 +64,30 @@ public:
     int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int
         dst, int K) {
       int m = flights.size();
-      auto inf = numeric_limits<long long int>::max() ;
-      vector<long long int> dist(n, numeric_limits<long long int>::max() );
-      vector<int> hop(n,INF);
-      dist[src] = 0;
-      hop[src]  = 0;
-      debug("K=",K);
-      ++K;
-      forall(i,0,K){
+      vi v(n, INF), u;
+      v[src] = 0;
+      u = v;
+      forall(_,0,K+1){
+        print_(v);
         for( const auto & e : flights ){
-          if( dist[e[0]] < inf && hop[e[0]] <= i && dist[e[0]] + e[2] < dist[e[1]] ){
-            dist[e[1]] = dist[e[0]] + e[2];
-            hop[e[1]] = hop[e[0]] + 1;
-          }
+          debug("e=",e[0],e[1],e[2]);
+          u[e[1]] = min( u[e[1]], v[e[0]] + e[2] );
         }
+        swap(v,u);
       }
-      if( dist[dst] == inf ) return -1;
-      else return dist[dst];
+      
+      return v[dst] == INF ? -1 : v[dst];
     }
 };
 int main( int argc, char * argv[] ){
-  vector<vector<int>> fli  = {{0,1,100},{1,2,100},{0,2,500}};
+  int n, m, k, src, trg;
+  cin >> n >> m >> k >> src >> trg;
+
+  vvi fli(m, vi(3));
+  for( auto & row : fli ) input(row);
   Solution sol;
-  cout << sol.findCheapestPrice( 3, fli, 0, 2, 0 ) << '\n';
+  debug("n,m,src,trg,k", n, m, src, trg, k );
+  cout << sol.findCheapestPrice( n, fli, src, trg, k ) << '\n';
 
   return 0;
 }
