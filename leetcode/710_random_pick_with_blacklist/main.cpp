@@ -82,6 +82,7 @@ class Solution {
       //B = blacklist;
       swap(bl, blacklist);
       forall(i,0,sz(bl)) bl[i] -= i;
+      print_(bl);
       this->dist = uniform_int_distribution<int>(0,N-sz(bl)-1);
       random_device rd;
       this->rng.seed( rd() );
