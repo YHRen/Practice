@@ -55,6 +55,7 @@ struct debugger
 class Solution {
   public:
     int magicalString(int n) {
+      if( n <= 1 ) return n;
       vector<int> v(n);
       v[0] = 1;
       v[1] = 2;

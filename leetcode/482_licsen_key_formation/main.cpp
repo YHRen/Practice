@@ -54,9 +54,36 @@ struct debugger
 
 /******* Actual Code Starts Here *********/
 // https://leetcode.com/contest/leetcode-weekly-contest-14/problems/license-key-formatting/
+auto ____ =[]() { std::ios::sync_with_stdio(0); cin.tie(0); return nullptr; }();
 class Solution {
   public:
     string licenseKeyFormatting(string S, int K) {
+      string str;
+      if( K == 0 || S.empty() ) return str;
+      string tmp;
+      for(auto c : S){
+        if(c!= '-') tmp.pb(toupper(c));
+      }
+      int n = tmp.size();
+      if( n%K == 0 ){
+        forall(i,0,n/K){
+          str+=tmp.substr(i*K,K);
+          str.pb('-');
+        }
+      }else{
+        int start = n%K;
+        str+= tmp.substr(0,start);
+        str+='-';
+        forall(i,0,n/K){
+          str+=tmp.substr(start+i*K,K);
+          str.pb('-');
+        }
+      }
+      str.pop_back();
+      return str;
+    }
+
+    string licenseKeyFormatting_slow(string S, int K) {
       string str;
       if( K == 0 || S.empty() ) return str;
       vector<char> tmp;
