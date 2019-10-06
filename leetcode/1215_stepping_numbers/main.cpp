@@ -1,4 +1,3 @@
-#include <random>
 #include <vector>
 #include <set>
 #include <map>
@@ -57,67 +56,58 @@ struct debugger {
 }dbg;
 
 auto ____ =[]() { std::ios::sync_with_stdio(0); cin.tie(0); return nullptr; }();
-class MajorityChecker {
-  static constexpr int M = 100;
-  int n;
-  vi v;
-  mt19937 rng;
-  vi buf;
-  unordered_map<int,vi> dict;
-  ii get_max_elm(vector<int>::const_iterator l, vector<int>::const_iterator r){
-    int max_elm = *l, run = 1;
-    for(auto i = l+1; i!=r; ++i){
-      if( *i == max_elm ) run ++;
-      else run --;
-      if( run == 0 ){
-        max_elm = *i;
-        run = 1;
-      }
+class Solution {
+  ll L,H;
+  vi ans;
+  ll to_num( const vi & digs ){
+    if( digs.empty() ) return 0;
+    ll ans = 0;
+    for(auto x : digs){
+      ans += x;
+      ans *= 10;
     }
-    int res = count_if( l, r , [max_elm](int x){ return x==max_elm; });
-    return mp(max_elm, res);
+    ans /= 10;
+    return ans;
   }
-  int get_counts_in_range(int x, int l, int r){
-    const auto &  u = dict[x];
-    return upper_bound( all(u), r) - lower_bound(all(u), l);
-  }
-  public:
-    MajorityChecker(vector<int>& arr) {
-      n = sz(arr);
-      swap(v,arr);
-      forall(i,0,n) dict[v[i]].pb(i);
-      random_device rd;
-      rng = mt19937(rd());
-      buf.resize(M);
+  void aux( vi & v, ll val ){
+    if( val <= H and val >= L ) ans.pb(val);
+    if( val > H ) return;
+    if( v.back() != 9 ){
+      int nxt = v.back()+1;
+      v.pb(nxt);
+      val*=10;
+      val += nxt;
+      aux(v, val);
+      v.pop_back();
+      val /= 10;
     }
+    if( v.back() != 0 ){
+      int nxt = v.back()-1;
+      v.pb(nxt);
+      val *= 10;
+      val += nxt;
+      aux(v, val);
+      v.pop_back();
+      val/=10;
+    }
+  }
 
-    int query(int left, int right, int threshold) {
-      int len = right - left + 1;
-      if( threshold > len ) return -1;
-      int max_elm = v[left], run = 1;
-      if( len < 100 ){
-        auto [elm, cnt] = get_max_elm(v.begin()+left, v.begin()+right+1);
-        if( cnt >= threshold ) return elm;
-        else return -1;
-      }else{ // prob method
-        uniform_int_distribution<int> dist(left, right);
-        forall(i,0,M){ 
-          int elm = v[dist(rng)];
-          int cnt = get_counts_in_range(elm, left, right);
-          if( cnt >= threshold ) return elm;
-        }
-        return -1;
+  public:
+    vector<int> countSteppingNumbers(int low, int high) {
+    L = low, H = high;
+      vi v;
+      if( low == 0 ) ans.pb(0);
+      forall(i,1,10){
+        v.clear();
+        v.pb(i);
+        aux(v, i);
       }
+      sort(all(ans));
+      return ans;
     }
 };
-
-/**
- * Your MajorityChecker object will be instantiated and called as such:
- * MajorityChecker* obj = new MajorityChecker(arr);
- * int param_1 = obj->query(left,right,threshold);
- */
 int main( int argc, char * argv[] ){
-  int n; cin >> n; 
+  int n,m; cin >> n; 
   vi v(n); input(v);
   return 0;
 }

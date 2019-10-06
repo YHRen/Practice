@@ -1,4 +1,3 @@
-#include <random>
 #include <vector>
 #include <set>
 #include <map>
@@ -57,65 +56,25 @@ struct debugger {
 }dbg;
 
 auto ____ =[]() { std::ios::sync_with_stdio(0); cin.tie(0); return nullptr; }();
-class MajorityChecker {
-  static constexpr int M = 100;
-  int n;
-  vi v;
-  mt19937 rng;
-  vi buf;
-  unordered_map<int,vi> dict;
-  ii get_max_elm(vector<int>::const_iterator l, vector<int>::const_iterator r){
-    int max_elm = *l, run = 1;
-    for(auto i = l+1; i!=r; ++i){
-      if( *i == max_elm ) run ++;
-      else run --;
-      if( run == 0 ){
-        max_elm = *i;
-        run = 1;
-      }
-    }
-    int res = count_if( l, r , [max_elm](int x){ return x==max_elm; });
-    return mp(max_elm, res);
-  }
-  int get_counts_in_range(int x, int l, int r){
-    const auto &  u = dict[x];
-    return upper_bound( all(u), r) - lower_bound(all(u), l);
-  }
+class Solution {
   public:
-    MajorityChecker(vector<int>& arr) {
-      n = sz(arr);
-      swap(v,arr);
-      forall(i,0,n) dict[v[i]].pb(i);
-      random_device rd;
-      rng = mt19937(rd());
-      buf.resize(M);
-    }
-
-    int query(int left, int right, int threshold) {
-      int len = right - left + 1;
-      if( threshold > len ) return -1;
-      int max_elm = v[left], run = 1;
-      if( len < 100 ){
-        auto [elm, cnt] = get_max_elm(v.begin()+left, v.begin()+right+1);
-        if( cnt >= threshold ) return elm;
-        else return -1;
-      }else{ // prob method
-        uniform_int_distribution<int> dist(left, right);
-        forall(i,0,M){ 
-          int elm = v[dist(rng)];
-          int cnt = get_counts_in_range(elm, left, right);
-          if( cnt >= threshold ) return elm;
+    vector<int> arraysIntersection(vector<int>& arr1, vector<int>& arr2, vector<int>& arr3) {
+      vi ans;
+      for(auto itr1 = arr1.begin(), itr2 = arr2.begin(), itr3 = arr3.begin(); 
+          itr1!=arr1.end() and itr2!=arr2.end() and itr3!=arr3.end(); /**/){
+        if( *itr1 == *itr2 and *itr2 == *itr3 ){
+          ans.pb(*itr1);
+          ++itr1, ++itr2, ++itr3;
+        }else{
+          int max_elm = max(*itr1, max(*itr2,*itr3));
+          if( *itr1 < max_elm ) ++itr1;
+          if( *itr2 < max_elm ) ++itr2;
+          if( *itr3 < max_elm ) ++itr3;
         }
-        return -1;
       }
+      return ans;
     }
 };
-
-/**
- * Your MajorityChecker object will be instantiated and called as such:
- * MajorityChecker* obj = new MajorityChecker(arr);
- * int param_1 = obj->query(left,right,threshold);
- */
 int main( int argc, char * argv[] ){
   int n; cin >> n; 
   vi v(n); input(v);
